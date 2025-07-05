@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fibonacci Sequence Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #1e293b; /* Dark background */
+            color: #e2e8f0; /* Light text color */
+            font-family: 'Poppins', sans-serif;
+        }
+        .number-box {
+            transition: all 0.3s ease;
+        }
+        .number-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        .number-box:nth-child(4n+1) { background-color: #3B82F6; }
+        .number-box:nth-child(4n+2) { background-color: #10B981; }
+        .number-box:nth-child(4n+3) { background-color: #F59E0B; }
+        .number-box:nth-child(4n+4) { background-color: #EF4444; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-12">
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-white mb-2">Fibonacci Sequence Generator</h1>
+            <p class="text-gray-300 max-w-2xl mx-auto">Generate the Fibonacci sequence up to any number of terms using recursion</p>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="bg-gray-800 rounded-xl shadow-md p-6 mb-12 max-w-xl mx-auto">
+            <div class="flex flex-col sm:flex-row gap-4 items-end">
+                <div class="flex-1">
+                    <label for="termCount" class="block text-sm font-medium text-gray-300 mb-1">Number of Terms</label>
+                    <input type="number" id="termCount" min="1" max="30" value="10" 
+                           class="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm bg-gray-700 text-white">
+                </div>
+                <button onclick="generateFibonacci()" 
+                        class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <span class="flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                        </svg>
+                        Generate Sequence
+                    </span>
+                </button>
+            </div>
+            <div class="mt-4 text-sm text-gray-400">
+                <div class="flex items-start text-xs text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Recursive implementation may be slow. For better performance with high numbers, consider memoization.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Display -->
+        <div id="resultContainer" class="hidden">
+            <h2 class="text-xl font-semibold text-gray-300 mb-4 text-center">Generated Sequence</h2>
+            <div id="fibonacciSequence" class="flex flex-wrap gap-3 justify-center mb-8"></div>
+        </div>
+    </div>
+
+    <script>
+        function fibonacci(n) {
+            if (n <= 0) return 0;
+            if (n === 1) return 1;
+            return fibonacci(n - 1) + fibonacci(n - 2);
+        }
+
+        function generateSequence(terms) {
+            let sequence = [];
+            for (let i = 0; i < terms; i++) {
+                sequence.push(fibonacci(i));
+            }
+            return sequence;
+        }
+
+        function generateFibonacci() {
+            const termCount = Math.min(30, parseInt(document.getElementById('termCount').value));
+            if (isNaN(termCount) || termCount <= 0) {
+                alert('Please enter a valid number greater than 0');
+                return;
+            }
+
+            const sequence = generateSequence(termCount);
+            const container = document.getElementById('fibonacciSequence');
+            container.innerHTML = '';
+
+            sequence.forEach((num, index) => {
+                const numberBox = document.createElement('div');
+                numberBox.className = 'number-box text-white font-bold rounded-lg flex flex-col items-center justify-center w-16 h-16 sm:w-20 sm:h-20 shadow-md';
+                numberBox.innerHTML = `
+                    <span class="text-xs opacity-90">Term ${index}</span>
+                    <span class="text-2xl">${num}</span>
+                `;
+                container.appendChild(numberBox);
+            });
+
+            document.getElementById('resultContainer').classList.remove('hidden');
+        }
+
+        // Generate default sequence on load
+        window.addEventListener('DOMContentLoaded', generateFibonacci);
+    </script>
+</body>
+</html>
